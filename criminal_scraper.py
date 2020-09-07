@@ -60,12 +60,9 @@ def fetching_records(self,*args,**kwargs):
         URL = "https://ujsportal.pacourts.us/DocketSheets/MDJ.aspx"
         print(URL)
 
-        r = session.get(URL)
+        r = session.get(URL, headers=headers)
         
         soup = BeautifulSoup(r.content,'html.parser')
-
-        cookies = soup.cookies
-
 
         captcha_answer = find_captcha(soup)
 
@@ -84,13 +81,11 @@ def fetching_records(self,*args,**kwargs):
                     "ctl00$ctl00$ctl00$ctl07$captchaAnswer": captcha_answer
                 }
 
-        res = session.post(URL,headers=headers, data=data,cookies=cookies)
+        res = session.post(URL,headers=headers, data=data)
+        cookies = res.cookies
         soup1 = BeautifulSoup(res.content, "html.parser")
 
-        cookies1 = soup1.cookies
-
         captcha_answer1 = find_captcha(soup1)
-        print(captcha_answer1)
 
         payload = {
             "__EVENTTARGET": "",
@@ -115,9 +110,10 @@ def fetching_records(self,*args,**kwargs):
             "ctl00$ctl00$ctl00$cphMain$cphDynamicContent$btnSearch" : "Search",
             "ctl00$ctl00$ctl00$ctl07$captchaAnswer": captcha_answer1
         }
-
-        res2 = session.post(URL,headers=headers,data=payload,cookies=cookies1)
-        res2_result = BeautifulSoup(res2.content, "html.parser")
+        
+        res2 = session.post(URL,headers=headers,data=payload,cookies=cookies)
+        res2_result = BeautifulSoup(res2.text, "html.parser")
+        print(res2_result)
         result = get_criminal_record(res2_result)
     return result
 
