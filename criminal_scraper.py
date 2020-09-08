@@ -68,9 +68,9 @@ def fetching_records(self,*args,**kwargs):
         URL = "https://ujsportal.pacourts.us/DocketSheets/MDJ.aspx"
         print(URL)
 
-        r = session.get(URL, headers=headers)
+        res1 = session.get(URL, headers=headers)
         
-        soup = BeautifulSoup(r.content,'html.parser')
+        soup = BeautifulSoup(res1.content,'html.parser')
 
         captcha_answer = find_captcha(soup)
 
